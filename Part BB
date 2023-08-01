@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+
+typedef struct pair {
+    int key;
+    int value;
+} pair_t;
+
+pair_t table[TABLE_SIZE];
+
+int linear_probing(int k, int i) {
+    return (k + i) % TABLE_SIZE;
+}
+
+int quadratic_probing(int k, int i) {
+    return (k + i * i) % TABLE_SIZE;
+}
+
+int double_hashing(int k, int i) {
+    int h1 = k % TABLE_SIZE;
+    int h2 = 7 - (k % 7);
+    return (h1 + i * h2) % TABLE_SIZE;
+}
+
+void insert(int key, int value, int probing_method) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        int index;
+        switch (probing_method) {
+            case 1:
+                index = linear_probing(key, i);
+                break;
+            case 2:
+                index = quadratic_probing(key, i);
+                break;
+            case 3:
+                index = double_hashing(key, i);
+                break;
+            default:
+                printf("Invalid probing method.\n");
+                return;
+        }
+        if (table[index].key == 0) {
+            table[index].key = key;
+            table[index].value = value;
+            return;
+        }
+    }
+    printf("The table is full. Can't insert the value.\n");
+}
+
+void print_table() {
+    printf("Key - Value\n");
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (table[i].key != 0) {
+            printf("%d - %d\n", table[i].key, table[i].value);
+        }
+    }
+}
+
+int main() {
+    printf("Choose probing method:\n1. Linear Probing\n2. Quadratic Probing\n3. Double Hashing\n");
+    int probing_method;
+    scanf("%d", &probing_method);
+    
+    printf("Enter number of values to insert:\n");
+    int num_values;
+    scanf("%d", &num_values);
+    
+    printf("Enter key-value pairs:\n");
+    for (int i = 0; i < num_values; i++) {
+        int key, value;
+        scanf("%d %d", &key, &value);
+        insert(key, value, probing_method);
+    }
+    
+    print_table();
+
+    return 0;
+}
